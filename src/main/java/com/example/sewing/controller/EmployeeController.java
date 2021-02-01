@@ -3,6 +3,7 @@ package com.example.sewing.controller;
 import java.util.List;
 
 import com.example.sewing.dto.EmployeeDetailsDto;
+import com.example.sewing.dto.SalaryDto;
 import com.example.sewing.service.EmployeeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class EmployeeController {
 	@PutMapping("/{id}")
 	public EmployeeDetailsDto updateEmployee(@RequestBody EmployeeDetailsDto dto, @PathVariable Long id) {
 		return service.updateEmployee(dto, id);
+	}
+
+	@PutMapping("/{id}/salary")
+	public EmployeeDetailsDto setEmployeeSalary(@RequestBody SalaryDto dto, @PathVariable Long id) {
+		return service.setEmployeeSalary(dto, id);
 	}
 
 	@GetMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.example.sewing.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import com.example.sewing.dto.EmployeeStockDto;
 import com.example.sewing.dto.EmployeeStocksMadeDto;
 import com.example.sewing.dto.IncomeDto;
 import com.example.sewing.dto.OutcomeDto;
+import com.example.sewing.dto.ProfitDto;
 import com.example.sewing.dto.SimpleEmployeeDto;
 import com.example.sewing.dto.SimpleStockDto;
 import com.example.sewing.dto.StockCountDto;
@@ -44,7 +46,9 @@ public class EmployeeStockService {
 			Double stockPrice = employeeStock.getStock().getSellPrice().doubleValue();
 			income += stockPrice * employeeStock.getCount();
 		}
-		return new IncomeDto(income);
+		BigDecimal toBD = new BigDecimal(Double.toString(income));
+		toBD.setScale(2, BigDecimal.ROUND_HALF_UP);
+		return new IncomeDto(toBD);
 	}
 
 	public OutcomeDto getOutcome() {
@@ -58,7 +62,22 @@ public class EmployeeStockService {
 		for (EmployeeDetailsDto empl : employees) {
 			outcome += empl.getSalary().doubleValue();
 		}
-		return new OutcomeDto(outcome);
+		BigDecimal toBD = new BigDecimal(Double.toString(outcome));
+		toBD.setScale(2, BigDecimal.ROUND_HALF_UP);
+		return new OutcomeDto(toBD);
+	}
+
+	public ProfitDto getProfit() {
+		IncomeDto income = getIncome();
+		OutcomeDto outcome = getOutcome();
+		return new ProfitDto(income.getIncome().subtract(outcome.getOutcome()));
+	}
+
+	public ProfitDto getProfitAfterTaxes() {
+		ProfitDto cleanProfit = getProfit();
+		if (cleanProfit.getProfit().compareTo(new BigDecimal(0)) > 0)
+			return new ProfitDto(cleanProfit.getProfit().multiply(new BigDecimal(1.0 / 5.0)));
+		return new ProfitDto(new BigDecimal("0"));
 	}
 
 	public List<EmployeeStocksMadeDto> getAllEmployeeStocksMade() {

@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.example.sewing.dto.CompanyDetailsDto;
 import com.example.sewing.entity.Company;
 import com.example.sewing.exceptions.DoesNotExistsException;
+import com.example.sewing.exceptions.InvalidInputException;
 import com.example.sewing.repository.CompanyRepo;
 import com.example.sewing.tools.ObjectConverter;
 
@@ -18,6 +19,9 @@ public class CompanyService {
 	private CompanyRepo repository;
 
 	public CompanyDetailsDto createCompany(CompanyDetailsDto dto) {
+		if (repository.existsByName(dto.getName())) {
+			throw new InvalidInputException(String.format("Company with name '%s' already exists.", dto.getName()));
+		}
 		Company company = ObjectConverter.convertObject(dto, Company.class);
 		Company saved = repository.save(company);
 		return ObjectConverter.convertObject(saved, CompanyDetailsDto.class);
@@ -35,6 +39,9 @@ public class CompanyService {
 		Optional<Company> existing = repository.findById(id);
 		if (!existing.isPresent()) {
 			throw new DoesNotExistsException(String.format("Company with ID: %d does not exist.", id));
+		}
+		if (update.getName() != existing.get().getName() && repository.existsByName(update.getName())) {
+			throw new InvalidInputException(String.format("Company with name '%s' already exists.", update.getName()));
 		}
 		existing.get().setName(update.getName());
 		existing.get().setUpdatedTs(Instant.now());

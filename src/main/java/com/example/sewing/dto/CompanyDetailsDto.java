@@ -4,9 +4,9 @@ import java.time.Instant;
 
 public class CompanyDetailsDto {
 	private Long id;
-	String name;
-	Instant createdTs = Instant.now();
-	Instant updatedTs;
+	private String name;
+	private Instant createdTs = Instant.now();
+	private Instant updatedTs;
 
 	public Long getId() {
 		return id;

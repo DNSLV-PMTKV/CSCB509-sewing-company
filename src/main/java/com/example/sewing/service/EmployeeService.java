@@ -24,10 +24,15 @@ public class EmployeeService {
 	@Autowired
 	private EmployeeRepo repository;
 
+	@Autowired
+	private CompanyService companyService;
+
 	public EmployeeDetailsDto createEmployee(EmployeeDetailsDto dto) {
 		Employee employee = ObjectConverter.convertObject(dto, Employee.class);
 		Employee saved = repository.save(employee);
-		return ObjectConverter.convertObject(saved, EmployeeDetailsDto.class);
+		EmployeeDetailsDto o = ObjectConverter.convertObject(saved, EmployeeDetailsDto.class);
+		o.setCompany(companyService.getCompany(saved.getCompany().getId()));
+		return o;
 	}
 
 	public EmployeeDetailsDto updateEmployee(EmployeeDetailsDto update, Long id) {

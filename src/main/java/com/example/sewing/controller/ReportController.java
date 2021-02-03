@@ -2,13 +2,11 @@ package com.example.sewing.controller;
 
 import java.util.List;
 
-import com.example.sewing.dto.EmployeeDetailsDto;
 import com.example.sewing.dto.EmployeeStocksMadeDto;
 import com.example.sewing.dto.IncomeDto;
 import com.example.sewing.dto.OutcomeDto;
 import com.example.sewing.dto.ProfitDto;
 import com.example.sewing.dto.StocksMadeCountDto;
-import com.example.sewing.service.EmployeeService;
 import com.example.sewing.service.EmployeeStockService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +20,6 @@ public class ReportController {
 
 	@Autowired
 	private EmployeeStockService employeeStockService;
-
-	@Autowired
-	private EmployeeService employeeService;
 
 	@GetMapping("/income")
 	public IncomeDto getIncome() {
@@ -54,10 +49,5 @@ public class ReportController {
 	@GetMapping("/stock-count")
 	public List<StocksMadeCountDto> getStcksMadeCount() {
 		return employeeStockService.getStocksMadeCount();
-	}
-
-	@GetMapping("/employees")
-	public List<EmployeeDetailsDto> getAllEmployees() {
-		return employeeService.getAllEmployees();
 	}
 }

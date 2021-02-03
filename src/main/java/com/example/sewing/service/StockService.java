@@ -28,6 +28,7 @@ public class StockService {
 			throw new DoesNotExistsException(String.format("Stock with ID: %d does not exist.", id));
 		}
 		Stock stock = existing.get();
+		stock.setName(update.getName() != null ? update.getName() : stock.getName());
 		stock.setColor(update.getColor() != null ? update.getColor() : stock.getColor());
 		stock.setCreatePrice(update.getCreatePrice() != null ? update.getCreatePrice() : stock.getCreatePrice());
 		stock.setSellPrice(update.getSellPrice() != null ? update.getSellPrice() : stock.getSellPrice());

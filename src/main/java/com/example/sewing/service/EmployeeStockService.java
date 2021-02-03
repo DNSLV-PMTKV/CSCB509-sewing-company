@@ -15,6 +15,7 @@ import com.example.sewing.dto.ProfitDto;
 import com.example.sewing.dto.SimpleEmployeeDto;
 import com.example.sewing.dto.SimpleStockDto;
 import com.example.sewing.dto.StockCountDto;
+import com.example.sewing.dto.StockDetailsDto;
 import com.example.sewing.dto.StocksMadeCountDto;
 import com.example.sewing.entity.EmployeeStock;
 import com.example.sewing.entity.Stock;
@@ -33,10 +34,19 @@ public class EmployeeStockService {
 	@Autowired
 	private EmployeeService employeeService;
 
+	@Autowired
+	private StockService stockService;
+
 	public EmployeeStockDto createEmployeeStock(EmployeeStockDto dto) {
+		EmployeeDetailsDto empl = employeeService.getEmployee(dto.getEmployee().getId());
+		StockDetailsDto stock = stockService.getStock(dto.getStock().getId());
 		EmployeeStock employeeStock = ObjectConverter.convertObject(dto, EmployeeStock.class);
 		EmployeeStock saved = repository.save(employeeStock);
-		return ObjectConverter.convertObject(saved, EmployeeStockDto.class);
+
+		EmployeeStockDto o = ObjectConverter.convertObject(saved, EmployeeStockDto.class);
+		o.setEmployee(ObjectConverter.convertObject(empl, SimpleEmployeeDto.class));
+		o.setStock(ObjectConverter.convertObject(stock, SimpleStockDto.class));
+		return o;
 	}
 
 	public IncomeDto getIncome() {
@@ -75,8 +85,10 @@ public class EmployeeStockService {
 
 	public ProfitDto getProfitAfterTaxes() {
 		ProfitDto cleanProfit = getProfit();
-		if (cleanProfit.getProfit().compareTo(new BigDecimal(0)) > 0)
-			return new ProfitDto(cleanProfit.getProfit().multiply(new BigDecimal(1.0 / 5.0)));
+		if (cleanProfit.getProfit().compareTo(new BigDecimal(0)) > 0) {
+			BigDecimal tax = cleanProfit.getProfit().multiply(new BigDecimal(Double.toString(1.0 / 5.0)));
+			return new ProfitDto(cleanProfit.getProfit().subtract(tax));
+		}
 		return new ProfitDto(new BigDecimal("0"));
 	}
 
